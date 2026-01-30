@@ -1,0 +1,42 @@
+name: untitled
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+  
+  # UI & Design
+  google_fonts: ^6.1.0
+  fl_chart: ^0.66.0
+  animations: ^2.0.11
+  font_awesome_flutter: ^10.7.0
+  
+  # Data & Storage
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  shared_preferences: ^2.2.2
+  intl: ^0.19.0
+  uuid: ^4.2.2
+  
+  # Auth & Account
+  google_sign_in: ^6.2.1
+  image_picker: ^1.0.7
+  
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
