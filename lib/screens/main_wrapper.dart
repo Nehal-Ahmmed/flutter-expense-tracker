@@ -4,7 +4,7 @@ import 'package:untitled/providers/navigation_provider.dart';
 import 'package:untitled/screens/home_screen.dart';
 import 'package:untitled/screens/planning_screen.dart'; // Placeholder
 import 'package:untitled/screens/expense_screen.dart'; // Placeholder
-import 'package:untitled/screens/settings_screen.dart'; // Placeholder
+import 'package:untitled/screens/settings%20screen/settings_screen.dart'; // Placeholder
 import 'package:untitled/widgets/app_drawer.dart';
 
 /// [MainWrapper]

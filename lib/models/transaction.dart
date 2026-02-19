@@ -9,11 +9,8 @@ class Transaction {
   final double amount;
   final DateTime date;
   final TransactionType type;
-  final CategoryType category;
-
-  // Computed properties for easy UI access
-  IconData get icon => category.icon;
-  Color get color => category.color;
+  final String? desc;
+  final List<Goods>? goods;
 
   Transaction({
     required this.id,
@@ -21,7 +18,8 @@ class Transaction {
     required this.amount,
     required this.date,
     required this.type,
-    required this.category,
+    this.desc,
+    this.goods,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,14 +32,12 @@ class Transaction {
           .toString()
           .split('.')
           .last, // Store as string 'income' or 'expense'
-      'category': category
-          .toString()
-          .split('.')
-          .last, // Store as string 'food', etc.
+      'desc': desc,
+      'goods': goods?.map((x) => x.toMap()).toList(),
     };
   }
 
-  static Transaction fromMap(Map<String, dynamic> map) {
+  factory Transaction.fromMap(Map<String, dynamic> map) {
     return Transaction(
       id: map['id'],
       title: map['title'],
@@ -50,9 +46,58 @@ class Transaction {
       type: TransactionType.values.firstWhere(
         (e) => e.toString().split('.').last == map['type'],
       ),
-      category: CategoryType.values.firstWhere(
-        (e) => e.toString().split('.').last == map['category'],
-      ),
+      desc: map['desc'],
+      goods: map['goods'] != null
+          ? List<Goods>.from(map['goods']?.map((x) => Goods.fromMap(x)))
+          : null,
     );
   }
+}
+
+class Goods {
+  final String id;
+  final String? name;
+  final double price;
+  final int? quantity;
+  final String? desc;
+  final DateTime? date;
+  final CategoryType? category;
+
+  Goods({
+    required this.id,
+    this.name,
+    required this.price,
+    this.quantity,
+    this.desc,
+    this.date,
+    this.category,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'quantity': quantity,
+      'desc': desc,
+      'date': date?.toIso8601String(),
+      'category': category?.toString().split('.').last,
+    };
+  }
+
+  factory Goods.fromMap(Map<String, dynamic> map) {
+    return Goods(
+      id: map['id'],
+      name: map['name'],
+      price: (map['price'] as num).toDouble(),
+      quantity: map['quantity'],
+      desc: map['desc'],
+      date: map['date'] != null ? DateTime.parse(map['date']) : null,
+      category: map['category'] != null
+          ? CategoryType.values.byName(map['category'])
+          : null,
+    );
+  }
+
+  void operator [](String other) {}
 }

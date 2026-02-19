@@ -1,67 +1,38 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:csv/csv.dart';
+
+import '../models/transaction.dart';
 
 class ExportService {
-  static Future<void> exportToCSV(BuildContext context) async {
-    // Show loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+  static Future<void> exportToCSV(List<Transaction> transactions) async {
+    List<List<dynamic>> rows = [];
 
-    await Future.delayed(const Duration(seconds: 2)); // Simulate work
+    // Header row
+    rows.add(["ID", "Date", "Title", "Type", "Amount", "Description", "Items"]);
 
-    // Mock Success
-    if (context.mounted) {
-      Navigator.pop(context); // Close loading
+    for (var tx in transactions) {
+      String goodsStr = tx.goods?.map((g) => "${g.name}(${g.quantity})").join(" | ") ?? "";
 
-      showModalBottomSheet(
-        context: context,
-        builder: (_) => Container(
-          padding: const EdgeInsets.all(20),
-          height: 250,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 60),
-              const SizedBox(height: 16),
-              Text(
-                'Export Successful!',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Your transactions have been exported to:\nDownloads/expenses_report.csv',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(color: Colors.grey),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Close',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      List<dynamic> row = [];
+      row.add(tx.id);
+      row.add(DateFormat('yyyy-MM-dd').format(tx.date));
+      row.add(tx.title);
+      row.add(tx.type.name);
+      row.add(tx.amount);
+      row.add(tx.desc ?? "");
+      row.add(goodsStr);
+      rows.add(row);
     }
+
+    String csvData = const ListToCsvConverter().convert(rows);
+
+    // ফাইল সেভ করার লজিক (Android/iOS এর জন্য path_provider লাগবে)
+    final directory = await getExternalStorageDirectory();
+    final file = File('${directory?.path}/transactions_report.csv');
+    await file.writeAsString(csvData);
+
+    print("Exported to: ${file.path}");
   }
 }

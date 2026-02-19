@@ -8,19 +8,25 @@ import 'package:untitled/providers/expense_provider.dart';
 import 'package:untitled/utils/theme.dart';
 import 'package:uuid/uuid.dart';
 
-class AddTransactionModal extends StatefulWidget {
-  const AddTransactionModal({super.key});
+class AddIncomeTransactionModal extends StatefulWidget {
+  const AddIncomeTransactionModal({super.key});
 
   @override
-  State<AddTransactionModal> createState() => _AddTransactionModalState();
+  State<AddIncomeTransactionModal> createState() => _AddIncomeTransactionModalState();
 }
 
-class _AddTransactionModalState extends State<AddTransactionModal> {
+class _AddIncomeTransactionModalState extends State<AddIncomeTransactionModal> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  CategoryType _selectedCategory = CategoryType.food;
-  TransactionType _selectedType = TransactionType.expense;
+  CategoryType _selectedCategory = CategoryType.salary;
+  TransactionType _selectedType = TransactionType.income;
+
+  final List<CategoryType> incomeCategories =[
+    CategoryType.salary,
+    CategoryType.freelance,
+    CategoryType.other,
+  ];
 
   void _submitData() {
     if (_amountController.text.isEmpty) {
@@ -39,7 +45,6 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
       amount: enteredAmount,
       date: _selectedDate,
       type: _selectedType,
-      category: _selectedCategory,
     );
 
     Provider.of<ExpenseProvider>(context, listen: false).addTransaction(newTx);
@@ -67,6 +72,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
   Widget build(BuildContext context) {
     // Basic bottom sheet UI
     return Padding(
+
       padding: EdgeInsets.only(
         top: 16,
         left: 16,
@@ -75,6 +81,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
       ),
       child: SingleChildScrollView(
         child: Column(
+
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -84,7 +91,6 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -96,49 +102,8 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
               style: GoogleFonts.outfit(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: context.lightBlack
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Toggle Type
-            Row(
-              children: [
-                Expanded(
-                  child: ChoiceChip(
-                    label: const Text('Expense'),
-                    selected: _selectedType == TransactionType.expense,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedType = TransactionType.expense;
-                      });
-                    },
-                    selectedColor: Colors.redAccent.withOpacity(0.2),
-                    labelStyle: TextStyle(
-                      color: _selectedType == TransactionType.expense
-                          ? Colors.red
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ChoiceChip(
-                    label: const Text('Income'),
-                    selected: _selectedType == TransactionType.income,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedType = TransactionType.income;
-                      });
-                    },
-                    selectedColor: Colors.greenAccent.withOpacity(0.2),
-                    labelStyle: TextStyle(
-                      color: _selectedType == TransactionType.income
-                          ? Colors.green
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 16),
 
@@ -173,7 +138,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
                 labelText: 'Category',
                 border: OutlineInputBorder(),
               ),
-              items: CategoryType.values.map((category) {
+              items: incomeCategories.map((category) {
                 return DropdownMenuItem(
                   value: category,
                   child: Row(

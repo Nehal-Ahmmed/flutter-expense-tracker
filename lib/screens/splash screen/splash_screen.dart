@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:untitled/screens/auth%20screen/BiometricAuthScreen.dart';
 import 'package:untitled/screens/main_wrapper.dart';
 import 'package:untitled/screens/onboarding_screen.dart';
 import 'package:untitled/utils/theme.dart';
@@ -46,21 +47,28 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkOnboarding() async {
-    // Artificial delay for splash effect + data loading
     await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
     final seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
+    final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
 
     if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) =>
-              seenOnboarding ? const MainWrapper() : const OnboardingScreen(),
-        ),
-      );
+      if (!seenOnboarding) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+        );
+      } else if (biometricEnabled) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const BiometricAuthScreen()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainWrapper()),
+        );
+      }
     }
   }
 

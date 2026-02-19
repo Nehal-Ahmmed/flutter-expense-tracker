@@ -22,12 +22,27 @@ class PlanningScreen extends StatelessWidget {
 
     for (var tx in transactions) {
       if (tx.type == TransactionType.expense) {
-        totalExpense += tx.amount;
-        categorySpending.update(
-          tx.category,
-          (value) => value + tx.amount,
-          ifAbsent: () => tx.amount,
-        );
+        if (tx.goods != null && tx.goods!.isNotEmpty) {
+          for (var item in tx.goods!) {
+            final category = item.category ?? CategoryType.other;
+            final itemTotal = item.price * (item.quantity ?? 1);
+
+            totalExpense += itemTotal;
+
+            categorySpending.update(
+              category,
+              (value) => value + itemTotal,
+              ifAbsent: () => itemTotal,
+            );
+          }
+        } else {
+          totalExpense += tx.amount;
+          categorySpending.update(
+            CategoryType.other,
+            (value) => value + tx.amount,
+            ifAbsent: () => tx.amount,
+          );
+        }
       }
     }
 
@@ -140,12 +155,10 @@ class PlanningScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.05),
-                    blurRadius: 10,
                   ),
                 ],
               ),

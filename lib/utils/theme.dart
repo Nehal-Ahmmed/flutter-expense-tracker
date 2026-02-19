@@ -84,3 +84,17 @@ class AppTheme {
     ),
   );
 }
+
+// এই extension টি আপনার AppTheme ফাইলেই যোগ করুন
+extension ThemeColors on BuildContext {
+  Color get primaryColor => Theme.of(this).colorScheme.primary;
+  Color get secondaryColor => Theme.of(this).colorScheme.secondary;
+  Color get surfaceColor => Theme.of(this).colorScheme.surface;
+  Color get textColor => Theme.of(this).textTheme.bodyLarge?.color ?? Colors.black;
+  Color get titleColor => Theme.of(this).textTheme.titleLarge?.color ?? Colors.black;
+  Color get subtitleColor => Theme.of(this).textTheme.titleMedium?.color ?? Colors.grey;
+  Color get lightBlack => Theme.of(this).brightness == Brightness.dark
+      ? Colors.white
+      : Colors.black; // কাস্টম কালার
+  Color get cardBackground => Theme.of(this).colorScheme.surface;
+}

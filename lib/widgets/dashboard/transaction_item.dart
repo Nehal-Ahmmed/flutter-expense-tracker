@@ -21,10 +21,9 @@ class TransactionItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: transaction.color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(transaction.icon, color: transaction.color),
+            child: Icon(Icons.shopify_outlined, color: Colors.green),
           ),
           const SizedBox(width: 16),
           Expanded(
