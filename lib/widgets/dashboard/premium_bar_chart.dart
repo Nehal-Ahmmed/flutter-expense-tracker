@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PremiumBarChart extends StatefulWidget {
-  const PremiumBarChart({super.key});
+  final Map<int, double> weeklySpending;
+
+  const PremiumBarChart({super.key, required this.weeklySpending});
 
   @override
   State<PremiumBarChart> createState() => _PremiumBarChartState();
@@ -59,7 +61,7 @@ class _PremiumBarChartState extends State<PremiumBarChart> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'Last 7 Days',
+                    'This Week',
                     style: GoogleFonts.outfit(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -83,7 +85,15 @@ class _PremiumBarChartState extends State<PremiumBarChart> {
   }
 
   BarChartData mainBarData() {
+    double maxY = 100; // Default min height
+    widget.weeklySpending.forEach((_, amount) {
+      if (amount > maxY) maxY = amount;
+    });
+    // Add some buffer to top
+    maxY = maxY * 1.2;
+
     return BarChartData(
+      maxY: maxY,
       barTouchData: BarTouchData(
         touchTooltipData: BarTouchTooltipData(
           // tooltipBgColor: Colors.blueGrey, // Use getTooltipItem for styling
@@ -204,24 +214,8 @@ class _PremiumBarChartState extends State<PremiumBarChart> {
 
   List<BarChartGroupData> showingGroups() {
     return List.generate(7, (i) {
-      switch (i) {
-        case 0:
-          return makeGroupData(0, 320, isTouched: i == touchedIndex);
-        case 1:
-          return makeGroupData(1, 450, isTouched: i == touchedIndex);
-        case 2:
-          return makeGroupData(2, 280, isTouched: i == touchedIndex);
-        case 3:
-          return makeGroupData(3, 500, isTouched: i == touchedIndex);
-        case 4:
-          return makeGroupData(4, 380, isTouched: i == touchedIndex);
-        case 5:
-          return makeGroupData(5, 600, isTouched: i == touchedIndex);
-        case 6:
-          return makeGroupData(6, 420, isTouched: i == touchedIndex);
-        default:
-          return throw Error();
-      }
+      final y = widget.weeklySpending[i] ?? 0.0;
+      return makeGroupData(i, y, isTouched: i == touchedIndex);
     });
   }
 
